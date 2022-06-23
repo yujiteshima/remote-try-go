@@ -1,25 +1,28 @@
-/*----------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See LICENSE in the project root for license information.
- *---------------------------------------------------------------------------------------*/
-
 package main
 
 import (
-	"fmt"
-	"io"
+	"log"
 	"net/http"
-
-	"github.com/microsoft/vscode-remote-try-go/hello"
 )
 
-func handle(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, hello.Hello())
+func handler(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte(`
+		<html>
+			<head>
+				<title>chat</title>
+			</head>
+		</html>
+		<body>
+			let's chat!
+		</body>
+	`))
+	// fmt.Fprintf(writer, "Hello World, %s!", request.URL.Path[1:])
 }
 
 func main() {
-	portNumber := "9000"
-	http.HandleFunc("/", handle)
-	fmt.Println("Server listening on port ", portNumber)
-	http.ListenAndServe(":"+portNumber, nil)
+	http.HandleFunc("/", handler)
+	// start server
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal("ListenAndServe:", err)
+	}
 }
